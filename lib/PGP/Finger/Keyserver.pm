@@ -30,8 +30,8 @@ sub fetch {
 	my $result = PGP::Finger::Result->new( source => 'keyserver' );
 
 	foreach my $id ( @ids ) {
-		my $pem = $self->_retrieve_keys('0x'.$id);
-		my $key = PGP::Finger::Key->new_pem($pem);
+		my $armored = $self->_retrieve_keys('0x'.$id);
+		my $key = PGP::Finger::Key->new_armored($armored);
 		$key->set_attr( source => 'keyserver' );
 		$key->set_attr( url => $self->url );
 		$key->set_attr( keyid => $id );

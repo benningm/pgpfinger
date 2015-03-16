@@ -6,10 +6,11 @@ use Moose;
 # VERSION
 
 use Digest::SHA qw(sha256_hex);
+use Digest::CRC qw(crcopenpgparmor_base64);
 use MIME::Base64;
 
 use overload
-    q{""}    => sub { $_[0]->pem },
+    q{""}    => sub { $_[0]->armored },
     fallback => 1;
 
 
@@ -17,19 +18,23 @@ has 'data' => ( is => 'ro' );
 
 has 'attributes' => ( is => 'ro', isa => 'HashRef[Str]', lazy => 1,
 	traits => [ 'Hash' ],
-	default => sub { {
-		my $version;
-		{
-			no strict 'vars'; # is only declared in build
-			$version = defined $VERSION ? $VERSION : 'head';
-		}
-		return { 'Version' => 'gpgfinger ('.$version.')'};
-	} },
+	default => sub { {} },
 	handles => {
 		set_attr => 'set',
 		get_attr => 'get',
 		has_attr => 'exists',
 		has_attrs => 'count',
+	},
+);
+
+has '_version' => ( is => 'ro', isa => 'Str', lazy => 1,
+	default => sub {
+		my $version;
+		{
+			no strict 'vars'; # is only declared in build
+			$version = defined $VERSION ? $VERSION : 'head';
+		}
+		return 'pgpfinger ('.$version.')';
 	},
 );
 
@@ -66,12 +71,12 @@ around BUILDARGS => sub {
         }
 };
 
-sub new_pem {
+sub new_armored {
 	my $class = shift;
-	my $pem = shift;
+	my $armored = shift;
 	
 	my $b64 = '';
-	my @lines = split( /\r?\n/, $pem );
+	my @lines = split( /\r?\n/, $armored );
 	my $line;
 	while( $line = shift @lines ) {
 		if( $line =~ /^\s*$/ ) { next; }
@@ -109,22 +114,30 @@ sub _build_fingerprint {
 	return sha256_hex( $self->data );
 }
 
-has 'pem' => ( is => 'ro', isa => 'Str', lazy_build => 1);
+has 'armored' => ( is => 'ro', isa => 'Str', lazy_build => 1);
 
-sub _build_pem {
+sub _build_armored {
 	my $self = shift;
-	my $pem = '';
+	my $armored = '';
 	if( $self->has_attrs ) {
-		$pem .= join( "\n",
+		$armored .= join( "\n",
 			map {
 				'# '.$_.': '.$self->get_attr($_)
 			} keys %{$self->attributes} );
-		$pem .= "\n";
+		$armored .= "\n";
 	}
-	$pem .= "-----BEGIN PGP PUBLIC KEY BLOCK-----\n";
-	$pem .= encode_base64( $self->data );
-	$pem .= "-----END PGP PUBLIC KEY BLOCK-----\n";
-	return $pem;
+
+	my $data = encode_base64( $self->data, '' );
+	$data =~ s!(.{1,64})!$1\n!g;
+
+	my $crc = crcopenpgparmor_base64( $self->data );
+
+	$armored .= "-----BEGIN PGP PUBLIC KEY BLOCK-----\n";
+	$armored .= "Version: ".$self->_version."\n\n";
+	$armored .= $data;
+	$armored .= '='.$crc;
+	$armored .= "-----END PGP PUBLIC KEY BLOCK-----\n";
+	return $armored;
 }
 
 sub clone {

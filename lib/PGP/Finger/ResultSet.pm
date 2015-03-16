@@ -39,7 +39,7 @@ sub as_string {
 	my $result .= '';
 
 	foreach my $key ( @keys ) {
-		$result .= $key->pem;
+		$result .= $key->armored;
 	}
 
 	return $result;
