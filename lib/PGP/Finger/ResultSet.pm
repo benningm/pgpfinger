@@ -34,12 +34,21 @@ sub merged_keys {
 }
 
 sub as_string {
-	my ( $self ) = @_;
+	my ( $self, $type ) = @_;
+	$type = lc $type;
 	my @keys = $self->merged_keys;
-	my $result .= '';
+	my $result = '';
 
 	foreach my $key ( @keys ) {
-		$result .= $key->armored;
+		if( $type eq 'armored' ) {
+			$result .= $key->armored;
+		} elsif ( $type eq 'generic' ){
+			$result .= $key->dns_record_generic;
+		} elsif ( $type eq 'rfc' ){
+			$result .= $key->dns_record_rfc;
+		} else {
+			die('invalid output format: '.$type);
+		}
 	}
 
 	return $result;

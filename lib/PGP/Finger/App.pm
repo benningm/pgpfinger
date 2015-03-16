@@ -10,6 +10,7 @@ with 'MooseX::Getopt';
 
 use PGP::Finger::DNS;
 use PGP::Finger::Keyserver;
+use PGP::Finger::GPG;
 
 has '+sources' => (
 	traits => [ 'NoGetopt' ],
@@ -23,6 +24,8 @@ has '+sources' => (
 				$src = PGP::Finger::DNS->new();
 			} elsif( $q eq 'keyserver' ) {
 				$src = PGP::Finger::Keyserver->new();
+			} elsif( $q eq 'gpg' ) {
+				$src = PGP::Finger::GPG->new();
 			} else {
 				die('unknown query type: '.$q);
 			}
@@ -45,6 +48,12 @@ has '_query' => ( is => 'ro', isa => 'ArrayRef[Str]', lazy => 1,
 	},
 );
 
+has 'output' => ( is => 'ro', isa => 'Str', default => 'armored',
+	traits => ['Getopt'],
+	cmd_aliases => 'o',
+	documentation => 'output format: armored,rfc or generic (default: armored)',
+);
+
 sub _usage_format {
 	return "usage: %c %o <uid> <more uids ...>";
 }
@@ -60,7 +69,7 @@ sub run {
 
 	foreach my $uid ( @uids ) {
 		my $resultset = $self->fetch( $uid );
-		print $resultset->as_string;
+		print $resultset->as_string( $self->output );
 	}
 
 	return;

@@ -46,7 +46,10 @@ sub fetch {
 			if($rr->type ne $rr_type ) {
 				next;
 			}
-			my $key = PGP::Finger::Key->new($rr->rdata);
+			my $key = PGP::Finger::Key->new(
+				mail => $addr,
+				data => $rr->rdata,
+			);
 			$key->set_attr( source => 'DNS' );
 			$key->set_attr( domain => $domain );
 			$key->set_attr( dnssec => $reply->header->ad ? 'ok' : 'unauthenticated' );

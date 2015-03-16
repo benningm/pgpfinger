@@ -5,7 +5,7 @@ use Moose;
 # ABSTRACT: class for holding and parsing pgp keys
 # VERSION
 
-use Digest::SHA qw(sha256_hex);
+use Digest::SHA qw(sha256_hex sha224_hex);
 use Digest::CRC qw(crcopenpgparmor_base64);
 use MIME::Base64;
 
@@ -60,20 +60,12 @@ sub merge_attributes {
 	return;
 }
 
-around BUILDARGS => sub {
-        my $orig  = shift;
-        my $class = shift;
-
-        if ( @_ == 1 && !ref $_[0] ) {
-                return $class->$orig( data => $_[0] );
-        } else {
-                return $class->$orig(@_);
-        }
-};
-
 sub new_armored {
-	my $class = shift;
-	my $armored = shift;
+	my ( $class, %options ) = @_;
+	my $armored = $options{'data'};
+	if( ! defined $armored ) {
+		die('new_armored called without data');
+	}
 	
 	my $b64 = '';
 	my @lines = split( /\r?\n/, $armored );
@@ -102,9 +94,9 @@ sub new_armored {
 	if( $b64 eq '') {
 		die('failed parsing PEM encoded key');
 	}
-	my $key = decode_base64( $b64 );
+	$options{'data'} = decode_base64( $b64 );
 
-	return $class->new( $key );
+	return $class->new( %options );
 }
 
 has 'fingerprint' => ( is => 'ro', isa => 'Str', lazy_build => 1);
@@ -140,10 +132,58 @@ sub _build_armored {
 	return $armored;
 }
 
+has 'mail' => ( is => 'ro', isa => 'Str', required => 1 );
+
+has 'local' => ( is => 'ro', isa => 'Str', lazy => 1,
+	default => sub {
+		my $self = shift;
+		my ($local) = split('@', $self->mail, 2);
+		return( $local );
+	},
+);
+
+has 'domain' => ( is => 'ro', isa => 'Str', lazy => 1,
+	default => sub {
+		my $self = shift;
+		my (undef, $domain) = split('@', $self->mail, 2);
+		return( $domain );
+	},
+);
+
+has 'dns_record_name' => ( is => 'ro', isa => 'Str', lazy => 1,
+	default => sub {
+		my $self = shift;
+		return sha224_hex($self->local).'._openpgpkey.'.$self->domain.'.';
+	},
+);
+
+has 'dns_record_generic' => ( is => 'ro', isa => 'Str', lazy_build => 1);
+
+sub _build_dns_record_generic {
+	my $self = shift;
+	my $name = $self->dns_record_name;
+	my $data = unpack( "H*", $self->data );
+	my $num_octets = length( $self->data );
+
+	return join(' ', $name, 'IN', 'TYPE65280', '\#', $num_octets, $data )."\n";
+}
+
+has 'dns_record_rfc' => ( is => 'ro', isa => 'Str', lazy_build => 1);
+
+sub _build_dns_record_rfc {
+	my $self = shift;
+	my $name = $self->dns_record_name;
+	my $num_octets = 0;
+	my $data = encode_base64( $self->data, '');
+
+	return join(' ', $name, 'IN', 'OPENPGPKEY ', $data )."\n";
+}
+
 sub clone {
 	my $self = shift;
 	my $class = ref( $self );
 	return $class->new(
+		mail => $self->mail,
 		data => $self->data,
 		attributes => $self->attributes,
 	);
