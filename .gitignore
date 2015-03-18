@@ -1,3 +1,7 @@
 .build
 PGP-Finger-*
 .*.swp
+pgpfinger*.deb
+pgpfinger*.changes
+pgpfinger*.dsc
+pgpfinger*.tar.*

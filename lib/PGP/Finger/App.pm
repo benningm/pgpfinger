@@ -11,6 +11,7 @@ with 'MooseX::Getopt';
 use PGP::Finger::DNS;
 use PGP::Finger::Keyserver;
 use PGP::Finger::GPG;
+use PGP::Finger::File;
 
 has '+sources' => (
 	traits => [ 'NoGetopt' ],
@@ -26,6 +27,11 @@ has '+sources' => (
 				$src = PGP::Finger::Keyserver->new();
 			} elsif( $q eq 'gpg' ) {
 				$src = PGP::Finger::GPG->new();
+			} elsif( $q eq 'file' ) {
+				$src = PGP::Finger::File->new(
+					input => $self->input,
+					format => $self->format,
+				);
 			} else {
 				die('unknown query type: '.$q);
 			}
@@ -33,6 +39,18 @@ has '+sources' => (
 		}
 		return( \@srcs );
 	},
+);
+
+has 'format' => ( is => 'ro', isa => 'Str', default => 'armored',
+	traits => ['Getopt'],
+	cmd_aliases => 'f',
+	documentation => 'format of input (armored or binary)',
+);
+
+has 'input' => ( is => 'ro', isa => 'Str', default => '-',
+	traits => ['Getopt'],
+	cmd_aliases => 'i',
+	documentation => 'path or - for stdin',
 );
 
 has 'query' => ( is => 'ro', isa => 'Str', default => 'dns,keyserver',

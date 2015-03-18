@@ -1,18 +1,20 @@
 # NAME
 
-gpgfinger - a tool to retrieve PGP keys
+pgpfinger - a tool to retrieve PGP keys
 
 # VERSION
 
-version 1.0
+version 1.1
 
 # SYNOPSIS
 
 
 ```
-  pgpfinger [-?q] [long options...] <uid> <more uids ...>
+  usage: pgpfinger [-?fioq] [long options...] <uid> <more uids ...>
         -? --usage --help  Prints this usage information.
-        -q --query         sources to query (default: dns,keyserver)
+        -f --format        format of input (armored or binary)
+        -i --input         path or - for stdin
+        -q --query         sources to query (default: dns,keyserver,gpg,file)
         -o --output        output format: armored,rfc or generic (default:
                            armored)
 ```
@@ -20,10 +22,16 @@ version 1.0
 
 -q --query <method,method,...> (default: keyserver)
 :   Select sources to query for PGP keys. Values must be comma seperated.
-Currently supported: dns,keyserver,gpg
--q --output <format> (default: armored)
+Currently supported: dns, keyserver, gpg, file
+-o --output <format> (default: armored)
 :   Select format of output.
-Supported formats: armored, generic, rfc
+Supported formats: armored, binary, generic, rfc
+-i --input <file> (default: -)
+:   Input used for file query method. (-q file)
+Path of a file or - for reading from stdin.
+-f --format <format> (default: armored)
+:   Format of file input.
+Supported formats: armored, binary
 
 # EXAMPLE
 

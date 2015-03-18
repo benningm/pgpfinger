@@ -42,6 +42,8 @@ sub as_string {
 	foreach my $key ( @keys ) {
 		if( $type eq 'armored' ) {
 			$result .= $key->armored;
+		} elsif ( $type eq 'binary' ){
+			$result .= $key->data;
 		} elsif ( $type eq 'generic' ){
 			$result .= $key->dns_record_generic;
 		} elsif ( $type eq 'rfc' ){

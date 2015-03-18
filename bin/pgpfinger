@@ -9,9 +9,11 @@ use warnings;
 
 =head1 SYNOPSIS
 
-  pgpfinger [-?qo] [long options...] <uid> <more uids ...>
-	-? --usage --help  Prints this usage information.
-	-q --query         sources to query (default: dns,keyserver)
+  usage: pgpfinger [-?fioq] [long options...] <uid> <more uids ...>
+        -? --usage --help  Prints this usage information.
+        -f --format        format of input (armored or binary)
+        -i --input         path or - for stdin
+        -q --query         sources to query (default: dns,keyserver,gpg,file)
         -o --output        output format: armored,rfc or generic (default:
                            armored)
 
@@ -23,13 +25,25 @@ use warnings;
 
 Select sources to query for PGP keys. Values must be comma seperated.
 
-Currently supported: dns,keyserver,gpg
+Currently supported: dns, keyserver, gpg, file
 
 =item -o --output <format> (default: armored)
 
 Select format of output.
 
-Supported formats: armored, generic, rfc
+Supported formats: armored, binary, generic, rfc
+
+=item -i --input <file> (default: -)
+
+Input used for file query method. (-q file)
+
+Path of a file or - for reading from stdin.
+
+=item -f --format <format> (default: armored)
+
+Format of file input.
+
+Supported formats: armored, binary
 
 =back
 
