@@ -3,13 +3,13 @@
 use strict;
 use warnings;
 
-# PODNAME: gpgfinger
+# PODNAME: pgpfinger
 # ABSTRACT: a tool to retrieve PGP keys
 # VERSION
 
 =head1 SYNOPSIS
 
-  pgpfinger [-?q] [long options...] <uid> <more uids ...>
+  pgpfinger [-?qo] [long options...] <uid> <more uids ...>
 	-? --usage --help  Prints this usage information.
 	-q --query         sources to query (default: dns,keyserver)
         -o --output        output format: armored,rfc or generic (default:
@@ -25,7 +25,7 @@ Select sources to query for PGP keys. Values must be comma seperated.
 
 Currently supported: dns,keyserver,gpg
 
-=item -q --output <format> (default: armored)
+=item -o --output <format> (default: armored)
 
 Select format of output.
 
