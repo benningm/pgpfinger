@@ -1,10 +1,14 @@
-# NAME
+# pgpfinger - a tool to retrieve PGP keys
 
-pgpfinger - a tool to retrieve PGP keys
+## Download
 
-# VERSION
+Tarballs are available from CPAN:
 
-version 1.1
+https://metacpan.org/pod/PGP::Finger
+
+RPM and Debian packages could be download from the openSuSE build service:
+
+http://software.opensuse.org/download.html?project=home%3Abenningm%3Apgpfinger&package=pgpfinger
 
 # SYNOPSIS
 
@@ -20,18 +24,26 @@ version 1.1
 ```
 # OPTIONS
 
--q --query <method,method,...> (default: keyserver)
-:   Select sources to query for PGP keys. Values must be comma seperated.
-Currently supported: dns, keyserver, gpg, file
--o --output <format> (default: armored)
-:   Select format of output.
-Supported formats: armored, binary, generic, rfc
--i --input <file> (default: -)
-:   Input used for file query method. (-q file)
-Path of a file or - for reading from stdin.
--f --format <format> (default: armored)
-:   Format of file input.
-Supported formats: armored, binary
+ * -q --query <method,method,...> (default: keyserver)
+   
+   Select sources to query for PGP keys. Values must be comma seperated.
+   
+   Currently supported: dns, keyserver, gpg, file
+ * -o --output <format> (default: armored)
+   
+   Select format of output.
+  
+   Supported formats: armored, binary, generic, rfc
+ * -i --input <file> (default: -)
+   
+   Input used for file query method. (-q file)
+   
+   Path of a file or - for reading from stdin.
+ * -f --format <format> (default: armored)
+   
+   Format of file input.
+   
+   Supported formats: armored, binary
 
 # EXAMPLE
 
