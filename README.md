@@ -24,7 +24,7 @@ http://software.opensuse.org/download.html?project=home%3Abenningm%3Apgpfinger&p
 ```
 # OPTIONS
 
- * -q --query <method,method,...> (default: keyserver)
+ * -q --query <method,method,...> (default: dns,keyserver,gpg,file)
    
    Select sources to query for PGP keys. Values must be comma seperated.
    
