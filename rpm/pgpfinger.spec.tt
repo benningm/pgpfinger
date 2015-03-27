@@ -18,6 +18,8 @@ Source0: %{module_name}-%{version}.tar.gz
 #AutoProv: 0
 # AutoReq: 0
 
+BuildRequires: perl, perl(ExtUtils::MakeMaker)
+
 %description
 [% dzil.abstract %]
 

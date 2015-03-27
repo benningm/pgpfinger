@@ -3,7 +3,7 @@ Section: perl
 Priority: optional
 Maintainer: Markus Benning <ich@markusbenning.de>
 Build-Depends: debhelper (>= 8)
-Build-Depends-Indep: perl
+Build-Depends-Indep: perl, libmoose-perl, libmoosex-getopt-perl, libnet-dns-perl, libdigest-crc-perl, libwww-perl
 Standards-Version: 3.9.2
 Homepage: http://search.cpan.org/dist/PGP-Finger/
 
