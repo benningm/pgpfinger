@@ -18,13 +18,13 @@ http://software.opensuse.org/download.html?project=home%3Abenningm%3Apgpfinger&p
         -? --usage --help  Prints this usage information.
         -f --format        format of input (armored or binary)
         -i --input         path or - for stdin
-        -q --query         sources to query (default: dns,keyserver,gpg,file)
+        -q --query         sources to query (default: dns,keyserver)
         -o --output        output format: armored,rfc or generic (default:
                            armored)
 ```
 # OPTIONS
 
- * -q --query <method,method,...> (default: dns,keyserver,gpg,file)
+ * -q --query <method,method,...> (default: dns,keyserver)
    
    Select sources to query for PGP keys. Values must be comma seperated.
    
