@@ -31,6 +31,7 @@ has '_version' => ( is => 'ro', isa => 'Str', lazy => 1,
 	default => sub {
 		my $version;
 		{
+      ## no critic
 			no strict 'vars'; # is only declared in build
 			$version = defined $VERSION ? $VERSION : 'head';
 		}
